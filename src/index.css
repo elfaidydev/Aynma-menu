@@ -22,6 +22,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior: none;
+  touch-action: none;
 }
 
 .app-root {

@@ -20,8 +20,11 @@ interface ScrollNavigation {
   resetToHome: () => void
 }
 
-const SCROLL_THRESHOLD = 28
-const ANIMATION_LOCK_MS = 720
+const SWIPE_MIN_PX = 64
+const WHEEL_THRESHOLD = 55
+const NAV_COOLDOWN_MS = 900
+const WHEEL_IDLE_RESET_MS = 160
+const TOUCH_WHEEL_GUARD_MS = 450
 
 export function useScrollNavigation(): ScrollNavigation {
   const [section, setSection] = useState<Section>('hero')
@@ -30,19 +33,42 @@ export function useScrollNavigation(): ScrollNavigation {
   const [direction, setDirection] = useState<1 | -1>(1)
   const [isAnimating, setIsAnimating] = useState(false)
 
-  const scrollAccumulator = useRef(0)
   const lockedUntil = useRef(0)
+  const wheelAccumulator = useRef(0)
+  const wheelIdleTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const touchWheelGuardUntil = useRef(0)
   const touchStartY = useRef(0)
+  const touchActive = useRef(false)
+  const touchHandled = useRef(false)
 
-  const lock = useCallback(() => {
+  const sectionRef = useRef(section)
+  const activeCategoryRef = useRef(activeCategory)
+  const activeIndexRef = useRef(activeIndex)
+
+  sectionRef.current = section
+  activeCategoryRef.current = activeCategory
+  activeIndexRef.current = activeIndex
+
+  const isLocked = useCallback(() => Date.now() < lockedUntil.current, [])
+
+  const armCooldown = useCallback(() => {
+    lockedUntil.current = Date.now() + NAV_COOLDOWN_MS
     setIsAnimating(true)
-    lockedUntil.current = Date.now() + ANIMATION_LOCK_MS
-    setTimeout(() => setIsAnimating(false), ANIMATION_LOCK_MS)
+    window.setTimeout(() => setIsAnimating(false), NAV_COOLDOWN_MS)
+  }, [])
+
+  const resetWheelAccumulator = useCallback(() => {
+    wheelAccumulator.current = 0
+    if (wheelIdleTimer.current !== null) {
+      clearTimeout(wheelIdleTimer.current)
+      wheelIdleTimer.current = null
+    }
   }, [])
 
   const setCategory = useCallback(
     (category: MenuCategory) => {
       if (category === activeCategory && section === 'menu') return
+      if (isLocked()) return
 
       const fromIdx = getCategoryIndex(activeCategory)
       const toIdx = getCategoryIndex(category)
@@ -50,14 +76,15 @@ export function useScrollNavigation(): ScrollNavigation {
       setActiveCategory(category)
       setActiveIndex(0)
       setSection('menu')
-      lock()
+      resetWheelAccumulator()
+      armCooldown()
     },
-    [activeCategory, section, lock],
+    [activeCategory, section, armCooldown, isLocked, resetWheelAccumulator],
   )
 
   const goToItem = useCallback(
     (index: number) => {
-      if (Date.now() < lockedUntil.current) return
+      if (isLocked()) return
       const items = getItemsByCategory(activeCategory)
       if (index < 0 || index >= items.length) return
       if (index === activeIndex && section === 'menu') return
@@ -65,112 +92,172 @@ export function useScrollNavigation(): ScrollNavigation {
       setDirection(index > activeIndex ? 1 : -1)
       setActiveIndex(index)
       setSection('menu')
-      lock()
+      resetWheelAccumulator()
+      armCooldown()
     },
-    [activeCategory, activeIndex, section, lock],
+    [activeCategory, activeIndex, section, armCooldown, isLocked, resetWheelAccumulator],
   )
 
   const enterMenu = useCallback(() => {
-    if (Date.now() < lockedUntil.current) return
+    if (isLocked()) return
     setDirection(1)
     setActiveCategory('desserts')
     setActiveIndex(0)
     setSection('menu')
-    lock()
-  }, [lock])
+    resetWheelAccumulator()
+    armCooldown()
+  }, [armCooldown, isLocked, resetWheelAccumulator])
 
   const backToHero = useCallback(() => {
-    if (Date.now() < lockedUntil.current) return
+    if (isLocked()) return
     setDirection(-1)
     setSection('hero')
-    lock()
-  }, [lock])
+    resetWheelAccumulator()
+    armCooldown()
+  }, [armCooldown, isLocked, resetWheelAccumulator])
 
   const resetToHome = useCallback(() => {
-    scrollAccumulator.current = 0
     lockedUntil.current = 0
+    touchWheelGuardUntil.current = 0
+    touchActive.current = false
+    touchHandled.current = false
+    resetWheelAccumulator()
     setIsAnimating(false)
     setDirection(-1)
     setActiveCategory('desserts')
     setActiveIndex(0)
     setSection('hero')
-  }, [])
+  }, [resetWheelAccumulator])
 
-  const handleScrollIntent = useCallback(
-    (delta: number) => {
-      if (Date.now() < lockedUntil.current) return
+  const navigateOneStep = useCallback(
+    (scrollingDown: boolean) => {
+      if (isLocked()) return
 
-      scrollAccumulator.current += delta
+      const currentSection = sectionRef.current
+      const currentCategory = activeCategoryRef.current
+      const currentIndex = activeIndexRef.current
 
-      if (Math.abs(scrollAccumulator.current) < SCROLL_THRESHOLD) return
-
-      const scrollingDown = scrollAccumulator.current > 0
-      scrollAccumulator.current = 0
-
-      if (section === 'hero') {
+      if (currentSection === 'hero') {
         if (scrollingDown) enterMenu()
         return
       }
 
-      const items = getItemsByCategory(activeCategory)
+      const items = getItemsByCategory(currentCategory)
 
       if (scrollingDown) {
-        if (activeIndex < items.length - 1) {
-          goToItem(activeIndex + 1)
+        if (currentIndex < items.length - 1) {
+          goToItem(currentIndex + 1)
         }
-      } else if (activeIndex > 0) {
-        goToItem(activeIndex - 1)
+        return
+      }
+
+      if (currentIndex > 0) {
+        goToItem(currentIndex - 1)
       } else {
         backToHero()
       }
     },
-    [section, activeCategory, activeIndex, enterMenu, backToHero, goToItem],
+    [backToHero, enterMenu, goToItem, isLocked],
+  )
+
+  const handleWheel = useCallback(
+    (deltaY: number) => {
+      if (Date.now() < touchWheelGuardUntil.current) return
+      if (isLocked()) {
+        resetWheelAccumulator()
+        return
+      }
+
+      wheelAccumulator.current += deltaY
+
+      if (wheelIdleTimer.current !== null) {
+        clearTimeout(wheelIdleTimer.current)
+      }
+
+      wheelIdleTimer.current = setTimeout(() => {
+        wheelAccumulator.current = 0
+        wheelIdleTimer.current = null
+      }, WHEEL_IDLE_RESET_MS)
+
+      if (Math.abs(wheelAccumulator.current) < WHEEL_THRESHOLD) return
+
+      const scrollingDown = wheelAccumulator.current > 0
+      resetWheelAccumulator()
+      navigateOneStep(scrollingDown)
+    },
+    [isLocked, navigateOneStep, resetWheelAccumulator],
+  )
+
+  const handleTouchEnd = useCallback(
+    (deltaY: number) => {
+      touchActive.current = false
+      if (touchHandled.current) return
+      if (isLocked()) return
+      if (Math.abs(deltaY) < SWIPE_MIN_PX) return
+
+      touchHandled.current = true
+      touchWheelGuardUntil.current = Date.now() + TOUCH_WHEEL_GUARD_MS
+      resetWheelAccumulator()
+      navigateOneStep(deltaY > 0)
+    },
+    [isLocked, navigateOneStep, resetWheelAccumulator],
   )
 
   useEffect(() => {
-    const onWheel = (e: WheelEvent) => {
-      e.preventDefault()
-      handleScrollIntent(e.deltaY)
-    }
-
     const isInteractive = (target: EventTarget | null) => {
       if (!(target instanceof Element)) return false
       return Boolean(target.closest('.port-nav, button, a, [role="button"]'))
     }
 
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault()
+      handleWheel(e.deltaY)
+    }
+
     const onTouchStart = (e: TouchEvent) => {
       if (isInteractive(e.target)) return
+      touchActive.current = true
+      touchHandled.current = false
       touchStartY.current = e.touches[0].clientY
     }
 
     const onTouchEnd = (e: TouchEvent) => {
       if (isInteractive(e.target)) return
+      if (!touchActive.current) return
       const delta = touchStartY.current - e.changedTouches[0].clientY
-      if (Math.abs(delta) > 24) handleScrollIntent(delta * 1.35)
+      handleTouchEnd(delta)
+    }
+
+    const onTouchCancel = () => {
+      touchActive.current = false
+      touchHandled.current = false
     }
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowDown' || e.key === 'PageDown') {
         e.preventDefault()
-        handleScrollIntent(SCROLL_THRESHOLD + 1)
+        if (!isLocked()) navigateOneStep(true)
       } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
         e.preventDefault()
-        handleScrollIntent(-(SCROLL_THRESHOLD + 1))
+        if (!isLocked()) navigateOneStep(false)
       }
     }
 
     window.addEventListener('wheel', onWheel, { passive: false })
     window.addEventListener('touchstart', onTouchStart, { passive: true })
     window.addEventListener('touchend', onTouchEnd, { passive: true })
+    window.addEventListener('touchcancel', onTouchCancel, { passive: true })
     window.addEventListener('keydown', onKeyDown)
 
     return () => {
       window.removeEventListener('wheel', onWheel)
       window.removeEventListener('touchstart', onTouchStart)
       window.removeEventListener('touchend', onTouchEnd)
+      window.removeEventListener('touchcancel', onTouchCancel)
       window.removeEventListener('keydown', onKeyDown)
+      resetWheelAccumulator()
     }
-  }, [handleScrollIntent])
+  }, [handleTouchEnd, handleWheel, isLocked, navigateOneStep, resetWheelAccumulator])
 
   return {
     section,
