@@ -1,0 +1,427 @@
+.menu-stage {
+  --arch-w: clamp(289px, 30.6vw, 442px);
+  --arch-h: clamp(425px, 57.8vh, 595px);
+  --menu-gap: 0.75rem;
+  --info-gap: clamp(14px, 2.8dvh, 24px);
+
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  padding: var(--menu-gap) 1rem max(0.5rem, env(safe-area-inset-bottom));
+  will-change: transform, opacity, filter;
+}
+
+.menu-stage__spacer--top {
+  display: none;
+}
+
+.menu-stage__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  flex: 0 0 auto;
+}
+
+.menu-stage__spacer--bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  flex: 0 0 auto;
+}
+
+.menu-visual {
+  position: relative;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  min-height: 0;
+}
+
+/* ── الاسم + السعر — تحت الصورة ── */
+.info-block {
+  position: relative;
+  width: var(--arch-w);
+  flex: 0 0 auto;
+  text-align: center;
+  margin-top: var(--info-gap);
+  padding-top: 0;
+}
+
+.info-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  will-change: transform, opacity;
+}
+
+.info-panel--next {
+  position: absolute;
+  inset: 0;
+  padding-top: 0;
+  opacity: 0;
+}
+
+.dish-title {
+  font-family: 'Noto Sans Arabic', sans-serif;
+  font-size: clamp(1.65rem, 5vw, 3.2rem);
+  font-weight: 700;
+  letter-spacing: 0;
+  color: #3a2e2c;
+  white-space: nowrap;
+  line-height: 1.2;
+  margin: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dish-price {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+  direction: rtl;
+}
+
+.dish-price__amount {
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-size: clamp(2.34rem, 5.76vw, 3.15rem);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.dish-price__currency {
+  display: block;
+  width: clamp(1.71rem, 4.68vw, 2.07rem);
+  height: clamp(1.71rem, 4.68vw, 2.07rem);
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+/* ── إطار الصورة — بطاقة كوفي بزوايا ناعمة ── */
+.arch {
+  position: relative;
+  width: var(--arch-w);
+  height: var(--arch-h);
+  border-radius: clamp(1.35rem, 4.5vw, 2rem);
+  overflow: hidden;
+  border: 1px solid rgba(139, 46, 49, 0.14);
+  box-shadow:
+    0 18px 44px rgba(28, 24, 20, 0.1),
+    0 4px 14px rgba(28, 24, 20, 0.05),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.65);
+  background: #f3ece4;
+  flex-shrink: 0;
+}
+
+.arch::before {
+  content: '';
+  position: absolute;
+  inset: 0.4rem;
+  border-radius: clamp(1rem, 3.8vw, 1.65rem);
+  border: 1px solid rgba(184, 149, 106, 0.22);
+  z-index: 3;
+  pointer-events: none;
+}
+
+.arch__wood {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    165deg,
+    #ebe3da 0%,
+    #e2d8cd 50%,
+    #d9cec2 100%
+  );
+  z-index: 0;
+}
+
+.arch__current,
+.arch__reveal {
+  position: absolute;
+  inset: 0.4rem;
+  border-radius: clamp(1rem, 3.8vw, 1.65rem);
+  overflow: hidden;
+  z-index: 1;
+  background: #1a1816;
+}
+
+.arch__reveal {
+  z-index: 2;
+  clip-path: inset(100% 0 0 0);
+  will-change: clip-path;
+}
+
+.arch__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 42%;
+  transform: scale(1.12);
+  transform-origin: center center;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+}
+
+.curtain-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 3px;
+  background: #faf9f7;
+  z-index: 10;
+  opacity: 0;
+  box-shadow: 0 0 12px rgba(240, 236, 228, 0.8);
+  will-change: top, opacity;
+  pointer-events: none;
+}
+
+/* ── Tablet (portrait & small) ── */
+@media (min-width: 641px) {
+  .menu-stage {
+    --arch-w: min(72vw, 580px);
+    --arch-h: min(58dvh, 700px);
+    --menu-gap: 1.25rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  .info-block {
+    margin-top: 28px;
+  }
+
+  .info-panel {
+    gap: 0.55rem;
+  }
+
+  .dish-title {
+    font-size: clamp(2.4rem, 4.2vw, 3.6rem);
+  }
+
+  .dish-price__amount {
+    font-size: clamp(3rem, 4.8vw, 3.75rem);
+  }
+
+  .dish-price__currency {
+    width: clamp(2rem, 3.2vw, 2.45rem);
+    height: clamp(2rem, 3.2vw, 2.45rem);
+  }
+
+  .arch {
+    border-radius: clamp(1.5rem, 2.8vw, 2.25rem);
+  }
+
+  .arch::before,
+  .arch__current,
+  .arch__reveal {
+    border-radius: clamp(1.15rem, 2.4vw, 1.9rem);
+  }
+
+  .arch::before,
+  .arch__current,
+  .arch__reveal {
+    inset: 0.45rem;
+  }
+}
+
+/* ── Tablet (landscape / medium) ── */
+@media (min-width: 768px) {
+  .menu-stage {
+    --arch-w: min(64vw, 640px);
+    --arch-h: min(62dvh, 740px);
+    --menu-gap: 1.5rem;
+  }
+}
+
+/* ── Large tablet / small desktop ── */
+@media (min-width: 1024px) {
+  .menu-stage {
+    --arch-w: min(52vw, 700px);
+    --arch-h: min(66dvh, 800px);
+    --menu-gap: 1.75rem;
+  }
+
+  .dish-title {
+    font-size: clamp(2.8rem, 3.5vw, 4rem);
+  }
+
+  .dish-price__amount {
+    font-size: clamp(3.4rem, 4vw, 4.1rem);
+  }
+
+  .dish-price__currency {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}
+
+/* ── Large screens ── */
+@media (min-width: 1280px) {
+  .menu-stage {
+    --arch-w: min(46vw, 760px);
+    --arch-h: min(68dvh, 860px);
+  }
+}
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+  .menu-stage {
+    --info-gap: 16px;
+    --arch-w: min(95vw, 100%);
+    --arch-h: min(calc(95vw * 1.58), 55dvh);
+    justify-content: stretch;
+    align-items: stretch;
+    gap: 0;
+    padding: 0 2.5vw env(safe-area-inset-bottom);
+  }
+
+  .menu-stage__spacer--top {
+    display: block;
+    flex: 2 1 0;
+    min-height: 0;
+    width: 100%;
+  }
+
+  .menu-stage__body {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+
+  .menu-stage__spacer--bottom {
+    flex: 1 1 0;
+    min-height: 0;
+    justify-content: flex-end;
+    padding-bottom: max(0.35rem, env(safe-area-inset-bottom));
+  }
+
+  .menu-visual {
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0;
+  }
+
+  .arch {
+    height: var(--arch-h);
+    width: var(--arch-w);
+    max-height: none;
+  }
+
+  .info-block {
+    width: 100%;
+    margin-top: var(--info-gap);
+    padding-bottom: 0;
+  }
+
+  .info-panel {
+    gap: clamp(0.2rem, 0.8dvh, 0.35rem);
+  }
+
+  .info-panel--next {
+    padding-top: 0;
+  }
+
+  .dish-title {
+    font-size: clamp(1.55rem, 6.8vw, 2.1rem);
+    color: #3a2e2c;
+    white-space: normal;
+    line-height: 1.12;
+  }
+
+  .dish-price__amount {
+    font-size: clamp(2.1rem, 8.5vw, 2.55rem);
+  }
+
+  .dish-price__currency {
+    width: clamp(1.55rem, 6.2vw, 1.85rem);
+    height: clamp(1.55rem, 6.2vw, 1.85rem);
+  }
+}
+
+/* iPhone 12 / similar height */
+@media (max-width: 640px) and (max-height: 860px) {
+  .menu-stage {
+    --arch-h: min(calc(95vw * 1.55), 53dvh);
+  }
+}
+
+/* Shorter phones — SE, mini */
+@media (max-width: 640px) and (max-height: 740px) {
+  .menu-stage {
+    --info-gap: 12px;
+    --arch-h: min(calc(95vw * 1.5), 49dvh);
+  }
+
+  .dish-title {
+    font-size: clamp(1.4rem, 6.2vw, 1.75rem);
+  }
+
+  .dish-price__amount {
+    font-size: clamp(1.85rem, 7.5vw, 2.2rem);
+  }
+}
+
+/* Very short screens */
+@media (max-width: 640px) and (max-height: 680px) {
+  .menu-stage {
+    --info-gap: 10px;
+    --arch-h: min(calc(95vw * 1.45), 45dvh);
+  }
+
+  .menu-stage__spacer--top {
+    flex: 1.5 1 0;
+  }
+
+  .menu-stage__spacer--bottom {
+    flex: 0.75 1 0;
+  }
+}
+
+/* ── Landscape mobile ── */
+@media (max-height: 500px) and (orientation: landscape) {
+  .menu-stage {
+    flex-direction: row;
+    align-items: center;
+    gap: 2rem;
+    padding: 1rem 2rem;
+    --arch-w: min(30.6vh, 221px);
+    --arch-h: min(64.6dvh, 340px);
+  }
+
+  .menu-visual {
+    flex: none;
+    align-items: center;
+  }
+
+  .info-block {
+    width: auto;
+    padding-top: 0;
+    text-align: left;
+  }
+
+  .info-panel {
+    align-items: flex-start;
+  }
+
+  .info-panel--next {
+    padding-top: 0;
+    align-items: flex-start;
+  }
+}

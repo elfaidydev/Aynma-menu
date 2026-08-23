@@ -1,0 +1,5 @@
+node_modules
+dist
+video-frames
+.DS_Store
+*.local

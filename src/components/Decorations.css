@@ -1,0 +1,55 @@
+.decorations {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+
+.decorations.visible {
+  opacity: 1;
+}
+
+.decoration {
+  position: absolute;
+  opacity: 0.18;
+  object-fit: contain;
+  filter: grayscale(1) sepia(0.3);
+}
+
+.decoration-shrimp {
+  top: 4%;
+  left: 8%;
+  width: clamp(60px, 10vw, 130px);
+  transform: rotate(-12deg);
+}
+
+.decoration-tomatoes {
+  bottom: 10%;
+  right: 6%;
+  width: clamp(70px, 11vw, 140px);
+}
+
+@media (max-width: 1024px) {
+  .decoration {
+    opacity: 0.1;
+  }
+
+  .decoration-shrimp {
+    width: 50px;
+    left: 2%;
+  }
+
+  .decoration-tomatoes {
+    width: 55px;
+    right: 2%;
+    bottom: 8%;
+  }
+}
+
+@media (max-width: 640px) {
+  .decorations {
+    display: none;
+  }
+}

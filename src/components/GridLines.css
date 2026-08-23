@@ -1,0 +1,22 @@
+.grid-lines {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.grid-lines.visible {
+  opacity: 1;
+}
+
+.grid-line {
+  border-right: 1px solid var(--grid-line);
+}
+
+.grid-line:last-child {
+  border-right: none;
+}

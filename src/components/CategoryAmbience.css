@@ -1,0 +1,104 @@
+.category-ambience {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.ambience__icon {
+  position: absolute;
+  color: var(--accent);
+  will-change: transform;
+}
+
+.ambience__icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.ambience__icon--sm {
+  width: clamp(30px, 5vw, 48px);
+  opacity: 0.14;
+}
+
+.ambience__icon--md {
+  width: clamp(44px, 7.5vw, 76px);
+  opacity: 0.18;
+}
+
+.ambience__icon--lg {
+  width: clamp(54px, 9vw, 96px);
+  opacity: 0.22;
+}
+
+/* ── حركة الطفو ── */
+.ambience__float--a {
+  animation: ambience-float-a 8s ease-in-out infinite;
+}
+
+.ambience__float--b {
+  animation: ambience-float-b 10s ease-in-out infinite;
+}
+
+.ambience__float--c {
+  animation: ambience-float-c 12s ease-in-out infinite;
+}
+
+@keyframes ambience-float-a {
+  0%, 100% {
+    transform: translate(0, 0) rotate(var(--amb-rot, 0deg));
+  }
+  33% {
+    transform: translate(8px, -16px) rotate(calc(var(--amb-rot, 0deg) + 4deg));
+  }
+  66% {
+    transform: translate(-5px, -10px) rotate(calc(var(--amb-rot, 0deg) - 3deg));
+  }
+}
+
+@keyframes ambience-float-b {
+  0%, 100% {
+    transform: translate(0, 0) rotate(var(--amb-rot, 0deg));
+  }
+  25% {
+    transform: translate(-10px, -12px) rotate(calc(var(--amb-rot, 0deg) - 4deg));
+  }
+  50% {
+    transform: translate(6px, -20px) rotate(calc(var(--amb-rot, 0deg) + 5deg));
+  }
+  75% {
+    transform: translate(-4px, -8px) rotate(calc(var(--amb-rot, 0deg) + 2deg));
+  }
+}
+
+@keyframes ambience-float-c {
+  0%, 100% {
+    transform: translate(0, 0) rotate(var(--amb-rot, 0deg));
+  }
+  40% {
+    transform: translate(12px, -18px) rotate(calc(var(--amb-rot, 0deg) + 6deg));
+  }
+  70% {
+    transform: translate(-8px, -14px) rotate(calc(var(--amb-rot, 0deg) - 5deg));
+  }
+}
+
+@media (min-width: 641px) {
+  .ambience__icon--sm { opacity: 0.17; }
+  .ambience__icon--md { opacity: 0.22; }
+  .ambience__icon--lg { opacity: 0.26; }
+}
+
+@media (min-width: 1024px) {
+  .ambience__icon--sm { opacity: 0.19; }
+  .ambience__icon--md { opacity: 0.24; }
+  .ambience__icon--lg { opacity: 0.28; }
+}
+
+@media (max-width: 640px) {
+  .ambience__icon--sm { width: clamp(26px, 7vw, 40px); }
+  .ambience__icon--md { width: clamp(36px, 10vw, 54px); }
+  .ambience__icon--lg { width: clamp(44px, 12vw, 64px); }
+}
