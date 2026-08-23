@@ -29,7 +29,7 @@ body {
   height: 100%;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.55s ease 0.05s;
+  transition: opacity 0.35s ease;
 }
 
 .app-root--ready {

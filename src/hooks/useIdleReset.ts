@@ -4,13 +4,11 @@ export const IDLE_RESET_MS = 5 * 60 * 1000
 
 const ACTIVITY_EVENTS = [
   'pointerdown',
-  'pointermove',
   'touchstart',
   'touchmove',
   'wheel',
   'keydown',
   'click',
-  'scroll',
 ] as const
 
 interface UseIdleResetOptions {

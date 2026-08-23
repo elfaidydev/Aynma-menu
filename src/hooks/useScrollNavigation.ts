@@ -20,8 +20,8 @@ interface ScrollNavigation {
   resetToHome: () => void
 }
 
-const SCROLL_THRESHOLD = 50
-const ANIMATION_LOCK_MS = 1400
+const SCROLL_THRESHOLD = 28
+const ANIMATION_LOCK_MS = 720
 
 export function useScrollNavigation(): ScrollNavigation {
   const [section, setSection] = useState<Section>('hero')
@@ -146,7 +146,7 @@ export function useScrollNavigation(): ScrollNavigation {
     const onTouchEnd = (e: TouchEvent) => {
       if (isInteractive(e.target)) return
       const delta = touchStartY.current - e.changedTouches[0].clientY
-      if (Math.abs(delta) > 40) handleScrollIntent(delta * 2)
+      if (Math.abs(delta) > 24) handleScrollIntent(delta * 1.35)
     }
 
     const onKeyDown = (e: KeyboardEvent) => {

@@ -1,4 +1,3 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
 import AppLoader from './components/AppLoader'
@@ -26,7 +25,5 @@ function Root() {
 }
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <Root />
-  </StrictMode>,
+  <Root />,
 )
