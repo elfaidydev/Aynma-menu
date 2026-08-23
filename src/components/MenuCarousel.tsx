@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import type { MenuCategory, MenuItem } from '../data/menu'
 import RiyalSymbol from './RiyalSymbol'
@@ -28,6 +28,12 @@ function setInfoContent(
   if (amount) amount.textContent = String(item.price)
 }
 
+function setImageSrc(img: HTMLImageElement | null, src: string) {
+  if (!img) return
+  if (img.getAttribute('src') === src) return
+  img.setAttribute('src', src)
+}
+
 function preloadMenuImage(src: string): Promise<void> {
   return new Promise((resolve) => {
     const img = new Image()
@@ -45,16 +51,24 @@ function preloadMenuImage(src: string): Promise<void> {
   })
 }
 
+function afterPaint(callback: () => void) {
+  requestAnimationFrame(() => {
+    requestAnimationFrame(callback)
+  })
+}
+
 export default function MenuCarousel({
   items,
   activeIndex,
   direction,
   category,
 }: MenuCarouselProps) {
-  const [index, setIndex] = useState(activeIndex)
+  const initialItem = items[activeIndex] ?? items[0]
+  const [displayedItem, setDisplayedItem] = useState<MenuItem | null>(initialItem ?? null)
+
   const prevRef = useRef(activeIndex)
   const prevCategoryRef = useRef(category)
-  const displayedItemRef = useRef<MenuItem | null>(null)
+  const displayedItemRef = useRef<MenuItem | null>(initialItem ?? null)
   const timelineRef = useRef<gsap.core.Timeline | null>(null)
   const first = useRef(true)
 
@@ -66,15 +80,25 @@ export default function MenuCarousel({
   const infoRef = useRef<HTMLDivElement>(null)
   const infoNextRef = useRef<HTMLDivElement>(null)
 
-  const item = items[index] ?? items[0]
+  useLayoutEffect(() => {
+    const item = displayedItemRef.current
+    if (!item) return
+    setImageSrc(currentImgRef.current, item.image)
+    setImageSrc(nextImgRef.current, item.image)
+  }, [])
 
   useEffect(() => {
     if (first.current) {
       first.current = false
+      const item = items[activeIndex] ?? items[0]
+      if (item) {
+        setImageSrc(currentImgRef.current, item.image)
+        setImageSrc(nextImgRef.current, item.image)
+        displayedItemRef.current = item
+        setDisplayedItem(item)
+      }
       prevRef.current = activeIndex
       prevCategoryRef.current = category
-      setIndex(activeIndex)
-      displayedItemRef.current = items[activeIndex] ?? items[0] ?? null
       gsap.set(lineRef.current, { top: '100%', opacity: 0 })
       gsap.set(revealRef.current, { clipPath: 'inset(100% 0 0 0)' })
       gsap.set(stageRef.current, { opacity: 1, x: 0, scale: 1, filter: 'blur(0px)' })
@@ -92,27 +116,46 @@ export default function MenuCarousel({
 
     timelineRef.current?.kill()
 
-    const finish = () => {
+    const commitDisplayedItem = () => {
       if (cancelled) return
-      setIndex(activeIndex)
       prevRef.current = activeIndex
       prevCategoryRef.current = category
       displayedItemRef.current = toItem
-      if (currentImgRef.current) currentImgRef.current.src = toItem.image
+      setDisplayedItem(toItem)
       setInfoContent(infoRef.current, toItem)
-      gsap.set(revealRef.current, { clipPath: 'inset(100% 0 0 0)' })
-      gsap.set(lineRef.current, { top: '100%', opacity: 0 })
       gsap.set(infoRef.current, { y: 0, opacity: 1 })
       gsap.set(infoNextRef.current, { opacity: 0, y: 0 })
       gsap.set(stageRef.current, { x: 0, scale: 1, opacity: 1, filter: 'blur(0px)' })
     }
 
+    const settleItemTransition = () => {
+      if (cancelled) return
+      setImageSrc(currentImgRef.current, toItem.image)
+
+      afterPaint(() => {
+        if (cancelled) return
+        gsap.set(revealRef.current, { clipPath: 'inset(100% 0 0 0)' })
+        gsap.set(lineRef.current, { top: '100%', opacity: 0 })
+        setImageSrc(nextImgRef.current, toItem.image)
+        commitDisplayedItem()
+      })
+    }
+
+    const finishCategoryTransition = () => {
+      if (cancelled) return
+      setImageSrc(currentImgRef.current, toItem.image)
+      setImageSrc(nextImgRef.current, toItem.image)
+      gsap.set(revealRef.current, { clipPath: 'inset(100% 0 0 0)' })
+      gsap.set(lineRef.current, { top: '100%', opacity: 0 })
+      commitDisplayedItem()
+    }
+
     const run = async () => {
-      if (currentImgRef.current) currentImgRef.current.src = fromItem.image
+      setImageSrc(currentImgRef.current, fromItem.image)
       await preloadMenuImage(toItem.image)
       if (cancelled) return
 
-      if (nextImgRef.current) nextImgRef.current.src = toItem.image
+      setImageSrc(nextImgRef.current, toItem.image)
       setInfoContent(infoNextRef.current, toItem)
 
       if (categoryChanged) {
@@ -121,7 +164,7 @@ export default function MenuCarousel({
 
         const tl = gsap.timeline({
           defaults: { ease: 'power3.inOut' },
-          onComplete: finish,
+          onComplete: finishCategoryTransition,
         })
         timelineRef.current = tl
 
@@ -135,7 +178,7 @@ export default function MenuCarousel({
 
         tl.call(() => {
           if (cancelled) return
-          if (currentImgRef.current) currentImgRef.current.src = toItem.image
+          setImageSrc(currentImgRef.current, toItem.image)
           setInfoContent(infoRef.current, toItem)
           gsap.set(infoRef.current, { y: 0, opacity: 1 })
           gsap.set(infoNextRef.current, { opacity: 0, y: 0 })
@@ -171,7 +214,7 @@ export default function MenuCarousel({
 
       const tl = gsap.timeline({
         defaults: { ease: 'power3.inOut' },
-        onComplete: finish,
+        onComplete: settleItemTransition,
       })
       timelineRef.current = tl
 
@@ -216,7 +259,7 @@ export default function MenuCarousel({
     }
   }, [activeIndex, direction, category, items])
 
-  if (!item) return null
+  if (!displayedItem) return null
 
   return (
     <div className="menu-stage" ref={stageRef}>
@@ -231,24 +274,20 @@ export default function MenuCarousel({
             <div className="arch__current">
               <img
                 ref={currentImgRef}
-                src={item.image}
                 alt=""
                 className="arch__img"
                 draggable={false}
-                decoding="async"
-                loading="eager"
+                decoding="sync"
               />
             </div>
 
             <div className="arch__reveal" ref={revealRef}>
               <img
                 ref={nextImgRef}
-                src={item.image}
                 alt=""
-                className="arch__img"
+                className="arch__img arch__img--reveal"
                 draggable={false}
-                decoding="async"
-                loading="eager"
+                decoding="sync"
               />
             </div>
 
@@ -258,16 +297,16 @@ export default function MenuCarousel({
 
         <div className="info-block">
           <div className="info-panel info-panel--current" ref={infoRef}>
-            <h2 className="dish-title">{item.name}</h2>
+            <h2 className="dish-title">{displayedItem.name}</h2>
             <p className="dish-price">
-              <span className="dish-price__amount">{item.price}</span>
+              <span className="dish-price__amount">{displayedItem.price}</span>
               <RiyalSymbol className="dish-price__currency" />
             </p>
           </div>
           <div className="info-panel info-panel--next" ref={infoNextRef} aria-hidden>
-            <h2 className="dish-title">{item.name}</h2>
+            <h2 className="dish-title">{displayedItem.name}</h2>
             <p className="dish-price">
-              <span className="dish-price__amount">{item.price}</span>
+              <span className="dish-price__amount">{displayedItem.price}</span>
               <RiyalSymbol className="dish-price__currency" />
             </p>
           </div>

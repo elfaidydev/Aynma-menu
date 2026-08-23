@@ -165,6 +165,7 @@
   z-index: 2;
   clip-path: inset(100% 0 0 0);
   will-change: clip-path;
+  transform: translateZ(0);
 }
 
 .arch__img {
@@ -177,6 +178,12 @@
   display: block;
   user-select: none;
   pointer-events: none;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.arch__img--reveal {
+  transform: scale(1.12) translateZ(0);
 }
 
 .curtain-line {
