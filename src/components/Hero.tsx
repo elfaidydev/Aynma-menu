@@ -1,54 +1,79 @@
-import { useEffect, useRef } from 'react'
-import { gsap } from 'gsap'
-import HeroAmbience from './HeroAmbience'
-import './Hero.css'
+"use client";
 
-export default function Hero() {
-  const rootRef = useRef<HTMLDivElement>(null)
+import { motion } from "framer-motion";
+import { useScroll, useTransform } from "framer-motion";
+import { ShineText } from "@/components/ShineText";
+import { BRAND_TAGLINE } from "@/data/brand";
+import { heroContainer, heroItem } from "@/lib/motion";
+import { scrollToSection } from "@/hooks/useLenis";
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+type HeroProps = {
+  isActive: boolean;
+};
 
-      tl.from('.hero-ambience__shape', {
-        scale: 0.4,
-        opacity: 0,
-        duration: 1.1,
-        stagger: 0.06,
-        ease: 'back.out(1.4)',
-      }, 0.1)
-
-      tl.from('.hero-ambience__ring', {
-        scale: 0.85,
-        opacity: 0,
-        duration: 1.2,
-      }, 0.15)
-
-      tl.from('.intro__ar', { y: 22, opacity: 0, duration: 0.85 }, 0.35)
-      tl.from('.intro__brand', { y: 36, opacity: 0, scale: 0.96, duration: 1.05 }, 0.48)
-      tl.from('.intro__line', { scaleX: 0, duration: 0.7 }, 0.68)
-      tl.from('.intro__tagline', { y: 12, opacity: 0, duration: 0.65 }, 0.82)
-      tl.from('.intro__hint', { opacity: 0, y: 10, duration: 0.8 }, 1.05)
-    }, rootRef)
-
-    return () => ctx.revert()
-  }, [])
+export function Hero({ isActive }: HeroProps) {
+  const { scrollY } = useScroll();
+  const ambienceBlur = useTransform(scrollY, [0, 500], [0, 18]);
+  const ambienceScale = useTransform(scrollY, [0, 800], [1.06, 1]);
+  const ambienceFilter = useTransform(ambienceBlur, (value) => `blur(${value}px)`);
+  const contentY = useTransform(scrollY, [0, 600], [0, 180]);
+  const contentOpacity = useTransform(scrollY, [0, 680], [1, 0]);
 
   return (
-    <div className="intro" ref={rootRef}>
-      <HeroAmbience />
+    <header className="hero-fixed">
+      <motion.div
+        className="hero-ambience"
+        style={{
+          scale: ambienceScale,
+          filter: ambienceFilter,
+        }}
+        aria-hidden
+      >
+        <span className="orb orb--1" />
+        <span className="orb orb--2" />
+        <span className="orb orb--3" />
+        <span className="hero-grain" />
+        <span className="hero-ring" />
+      </motion.div>
 
-      <div className="intro__content">
-        <p className="intro__ar">كوفي ايمنا</p>
-        <h1 className="intro__brand intro__shine">AYNMA</h1>
-        <div className="intro__line" />
-        <p className="intro__tagline">قائمة اليوم</p>
-      </div>
+      <motion.div
+        className={`hero-content ${isActive ? "active" : ""}`}
+        style={{ y: contentY, opacity: contentOpacity }}
+        variants={heroContainer}
+        initial="hidden"
+        animate={isActive ? "visible" : "hidden"}
+      >
+        <motion.p className="hero-eyebrow" variants={heroItem}>
+          كوفي ايمنا
+        </motion.p>
 
-      <div className="intro__hint">
-        <span className="intro__hint-text">اسحب للأعلى</span>
-        <div className="intro__hint-line" />
-      </div>
-    </div>
-  )
+        <motion.div variants={heroItem}>
+          <ShineText as="h1" className="main-logo">
+            AYNMA
+          </ShineText>
+        </motion.div>
+
+        <motion.div className="brand-line-shimmer" variants={heroItem} />
+
+        <motion.h2 className="hero-slogan" variants={heroItem}>
+          {BRAND_TAGLINE}
+        </motion.h2>
+      </motion.div>
+
+      <button
+        type="button"
+        className={`scroll-trigger ${isActive ? "visible" : ""}`}
+        onClick={() => scrollToSection("#desserts")}
+        aria-label="اسحب للأعلى للاستكشاف"
+      >
+        <span className="scroll-text">اكتشف القائمة</span>
+        <div className="scroll-visual">
+          <div className="scroll-line">
+            <div className="scroll-drop" />
+          </div>
+          <div className="scroll-arrow" />
+        </div>
+      </button>
+    </header>
+  );
 }

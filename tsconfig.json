@@ -1,21 +1,41 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
     "skipLibCheck": true,
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "isolatedModules": true,
-    "moduleDetection": "force",
-    "noEmit": true,
-    "jsx": "react-jsx",
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [{ "name": "next" }],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
-  "include": ["src"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": [
+    "node_modules",
+    "src/App.tsx",
+    "src/main.tsx",
+    "src/components/MenuCarousel.tsx",
+    "src/components/CategoryNav.tsx",
+    "src/components/HeroAmbience.tsx",
+    "src/components/CategoryAmbience.tsx",
+    "src/components/ScrollRails.tsx",
+    "src/components/MenuScrollHint.tsx",
+    "src/components/AppLoader.tsx",
+    "src/components/GridLines.tsx",
+    "src/components/Decorations.tsx",
+    "src/components/RiyalSymbol.tsx",
+    "src/hooks/useScrollNavigation.ts",
+    "src/hooks/useIdleReset.ts",
+    "src/hooks/useAppBoot.ts",
+    "src/data/dishes.ts"
+  ]
 }
