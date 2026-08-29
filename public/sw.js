@@ -1,4 +1,4 @@
-const CACHE_NAME = "aynma-menu-v1";
+const CACHE_NAME = "aynma-menu-v2";
 const CORE_ASSETS = [
   "/",
   "/manifest.webmanifest",
@@ -28,6 +28,16 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+
+  const url = new URL(event.request.url);
+
+  if (
+    url.pathname.startsWith("/_next/") ||
+    url.pathname.startsWith("/__nextjs") ||
+    url.searchParams.has("_rsc")
+  ) {
+    return;
+  }
 
   if (event.request.mode === "navigate") {
     event.respondWith(fetch(event.request).catch(() => caches.match("/")));

@@ -9,6 +9,7 @@ const THEME_LABELS: Record<MenuTheme, string> = {
   hot: "حار",
   cold: "بارد",
   sweets: "حلا",
+  drip: "مقطرة",
 };
 
 function PriceTag({ price, theme }: { price: number; theme: MenuTheme }) {
@@ -57,14 +58,21 @@ export function PremiumCard({ item, theme, variant = "grid", index = 0 }: Premiu
         <span className="premium-card__badge">{THEME_LABELS[theme]}</span>
 
         <div className="premium-card__media">
-          <Image
-            src={item.image}
-            alt={item.nameAr}
-            fill
-            sizes={variant === "slider" ? "360px" : "(max-width: 600px) 48vw, 340px"}
-            className="premium-card__image"
-            priority={index < 2}
-          />
+          {item.image ? (
+            <Image
+              src={item.image}
+              alt={item.nameAr}
+              fill
+              sizes={variant === "slider" ? "360px" : "(max-width: 600px) 48vw, 340px"}
+              className="premium-card__image"
+              priority={index < 2}
+            />
+          ) : (
+            <div className="premium-card__placeholder" aria-hidden>
+              <span className="premium-card__placeholder-mark">AYNMA</span>
+              <span className="premium-card__placeholder-ring" />
+            </div>
+          )}
           <div className="premium-card__vignette" />
           <div className="premium-card__shine" aria-hidden />
         </div>

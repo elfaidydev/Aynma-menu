@@ -63,7 +63,7 @@ export function Hero({ isActive }: HeroProps) {
       <button
         type="button"
         className={`scroll-trigger ${isActive ? "visible" : ""}`}
-        onClick={() => scrollToSection("#desserts")}
+        onClick={() => scrollToSection("#hot")}
         aria-label="اسحب للأعلى للاستكشاف"
       >
         <span className="scroll-text">اكتشف القائمة</span>

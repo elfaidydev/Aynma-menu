@@ -31,11 +31,18 @@ export function useIdleReset(isLoading: boolean) {
   }, [isLoading]);
 }
 
-export function useActiveSection(sectionIds: string[]) {
-  const [activeSection, setActiveSection] = useState(sectionIds[0]);
+export function useActiveSection(sectionIds: string[], defaultSection: string) {
+  const [activeSection, setActiveSection] = useState(defaultSection);
+  const [isMounted, setIsMounted] = useState(false);
   const [isScrollingByClick, setIsScrollingByClick] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
+
     const sections = sectionIds
       .map((id) => document.getElementById(id))
       .filter((section): section is HTMLElement => Boolean(section));
@@ -53,7 +60,7 @@ export function useActiveSection(sectionIds: string[]) {
 
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
-  }, [sectionIds, isScrollingByClick]);
+  }, [sectionIds, isScrollingByClick, isMounted]);
 
   const navigateTo = (sectionId: string) => {
     setActiveSection(sectionId);
@@ -62,5 +69,7 @@ export function useActiveSection(sectionIds: string[]) {
     window.setTimeout(() => setIsScrollingByClick(false), 1000);
   };
 
-  return { activeSection, navigateTo };
+  const resolvedActiveSection = isMounted ? activeSection : defaultSection;
+
+  return { activeSection: resolvedActiveSection, navigateTo };
 }

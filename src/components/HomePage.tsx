@@ -7,7 +7,7 @@ import { Hero } from "@/components/Hero";
 import { MenuSection } from "@/components/MenuSection";
 import { Navigation } from "@/components/Navigation";
 import { PortraitOverlay } from "@/components/PortraitOverlay";
-import { MENU_SECTIONS, NAV_ITEMS } from "@/data/menu";
+import { DEFAULT_ACTIVE_SECTION, MENU_SECTIONS, NAV_ITEMS } from "@/data/menu";
 import { useLenis } from "@/hooks/useLenis";
 import { useActiveSection, useIdleReset } from "@/hooks/useNavigation";
 import { useOrientationLock } from "@/hooks/useOrientationLock";
@@ -17,7 +17,7 @@ export function HomePage() {
   const [heroActive, setHeroActive] = useState(false);
   const showPortraitOverlay = useOrientationLock();
   const sectionIds = NAV_ITEMS.map((item) => item.id);
-  const { activeSection, navigateTo } = useActiveSection(sectionIds);
+  const { activeSection, navigateTo } = useActiveSection(sectionIds, DEFAULT_ACTIVE_SECTION);
 
   useLenis();
   useIdleReset(isLoading);
@@ -51,7 +51,12 @@ export function HomePage() {
       <Hero isActive={heroActive} />
 
       <div className="scrolling-wrapper">
-        <Navigation items={NAV_ITEMS} activeSection={activeSection} onNavigate={navigateTo} />
+        <Navigation
+          items={NAV_ITEMS}
+          activeSection={activeSection}
+          defaultSection={DEFAULT_ACTIVE_SECTION}
+          onNavigate={navigateTo}
+        />
 
         <main className="menu-container">
           {MENU_SECTIONS.map((section, index) => (
