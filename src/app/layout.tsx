@@ -25,8 +25,8 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "منيو — كوفي ايمنا | AYNMA",
-  description: "منيو كوفي ايمنا — AYNMA Coffee Menu",
+  title: "منيو — كوفي اينما | AYNMA",
+  description: "منيو كوفي اينما — AYNMA Coffee Menu",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,

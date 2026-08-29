@@ -12,7 +12,7 @@ export function Footer() {
           <p className="footer-tagline">{BRAND_TAGLINE}</p>
         </div>
         <div className="footer-meta">
-          <span>&copy; 2026 كوفي ايمنا</span>
+          <span>&copy; 2026 كوفي اينما</span>
           <span className="footer-sep">•</span>
           <span>تجربة قائمة رقمية فاخرة</span>
         </div>

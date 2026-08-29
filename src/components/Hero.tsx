@@ -44,7 +44,7 @@ export function Hero({ isActive }: HeroProps) {
         animate={isActive ? "visible" : "hidden"}
       >
         <motion.p className="hero-eyebrow" variants={heroItem}>
-          كوفي ايمنا
+          كوفي اينما
         </motion.p>
 
         <motion.div variants={heroItem}>

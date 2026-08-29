@@ -38,7 +38,7 @@ export function CurtainLoader({ onComplete }: CurtainLoaderProps) {
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           transition={{ duration: 0.9, delay: 0.15 }}
         >
-          كوفي ايمنا
+          كوفي اينما
         </motion.p>
 
         <motion.div
