@@ -17,8 +17,10 @@ export function scrollToTop(duration = 1.5) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-export function scrollToSection(targetId: string, offset = 120) {
-  const target = document.querySelector(targetId);
+export function scrollToSection(targetId: string, offset = 96) {
+  const sectionId = targetId.replace(/^#/, "");
+  const headline = document.getElementById(`${sectionId}-headline`);
+  const target = headline ?? document.querySelector(targetId);
   if (!target) return;
 
   const top = target.getBoundingClientRect().top + window.scrollY - offset;

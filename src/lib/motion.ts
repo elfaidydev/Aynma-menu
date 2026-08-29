@@ -23,12 +23,11 @@ export const heroItem = {
 };
 
 export const sectionTitle = {
-  hidden: { opacity: 0, y: 48, clipPath: "inset(0 0 100% 0)" },
+  hidden: { opacity: 0, y: 28 },
   visible: {
     opacity: 1,
     y: 0,
-    clipPath: "inset(0 0 0% 0)",
-    transition: { duration: 0.9, ease: ease.outExpo },
+    transition: { duration: 0.75, ease: ease.outExpo },
   },
 };
 

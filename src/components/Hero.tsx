@@ -64,14 +64,22 @@ export function Hero({ isActive }: HeroProps) {
         type="button"
         className={`scroll-trigger ${isActive ? "visible" : ""}`}
         onClick={() => scrollToSection("#hot")}
-        aria-label="اسحب للأعلى للاستكشاف"
+        aria-label="اكتشف القائمة"
       >
-        <span className="scroll-text">اكتشف القائمة</span>
-        <div className="scroll-visual">
-          <div className="scroll-line">
-            <div className="scroll-drop" />
+        <span className="scroll-trigger__label">
+          <span className="scroll-trigger__label-text">اكتشف القائمة</span>
+          <span className="scroll-trigger__label-shine" aria-hidden>
+            اكتشف القائمة
+          </span>
+        </span>
+
+        <div className="scroll-indicator" aria-hidden>
+          <div className="scroll-indicator__capsule">
+            <span className="scroll-indicator__dot" />
           </div>
-          <div className="scroll-arrow" />
+          <svg className="scroll-indicator__chevron" viewBox="0 0 20 20" fill="none">
+            <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
         </div>
       </button>
     </header>
