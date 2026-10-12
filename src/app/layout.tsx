@@ -1,25 +1,24 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Noto_Sans_Arabic, Outfit } from "next/font/google";
+import localFont from "next/font/local";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import "./globals.css";
 
-const cormorant = Cormorant_Garamond({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+const cormorant = localFont({
+  src: [{ path: "../../public/fonts/brand.ttf", weight: "400" }, { path: "../../public/fonts/brand-semibold.ttf", weight: "600" }],
   variable: "--font-brand",
   display: "swap",
 });
-
-const notoArabic = Noto_Sans_Arabic({
-  subsets: ["arabic"],
-  weight: ["400", "500", "600", "700", "800"],
+const tajawal = localFont({
+  src: [
+    { path: "../../public/fonts/tajawal-400.ttf", weight: "400" },
+    { path: "../../public/fonts/tajawal-500.ttf", weight: "500" },
+    { path: "../../public/fonts/tajawal-700.ttf", weight: "700" },
+  ],
   variable: "--font-ar",
   display: "swap",
 });
-
-const outfit = Outfit({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+const outfit = localFont({
+  src: [{ path: "../../public/fonts/outfit.ttf", weight: "400" }, { path: "../../public/fonts/outfit-semibold.ttf", weight: "600" }],
   variable: "--font-en",
   display: "swap",
 });
@@ -43,19 +42,19 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#8b2e31",
+  themeColor: "#702e3a",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="ar"
       dir="rtl"
-      className={`${cormorant.variable} ${notoArabic.variable} ${outfit.variable}`}
+      className={`${cormorant.variable} ${tajawal.variable} ${outfit.variable}`}
     >
       <body>
         <ServiceWorkerRegister />

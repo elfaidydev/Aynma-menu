@@ -1,4 +1,4 @@
-const CACHE_NAME = "aynma-menu-v2";
+const CACHE_NAME = "aynma-menu-v3";
 const CORE_ASSETS = [
   "/",
   "/manifest.webmanifest",
