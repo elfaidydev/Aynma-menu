@@ -907,3 +907,26 @@ a:focus-visible,
 @keyframes preview-appear{from{opacity:0;transform:translateY(18px) scale(.95)}to{opacity:1;transform:none}}
 @media(max-width:600px){.image-lightbox{padding:8px;width:96vw}.glass-preview{padding:8px;border-radius:17px}.preview-photo{height:56dvh;border-radius:11px}.preview-close{width:44px;height:44px;top:18px;right:18px}.preview-caption{padding:17px 7px 8px}.preview-caption h2{font-size:19px}.preview-caption p{font-size:8px}.preview-caption .menu-price b{font-size:25px}}
 @media(prefers-reduced-motion:reduce){.image-lightbox[open] .glass-preview{animation:none}}
+
+/* Improved tablet readability and transparent photo glass. */
+.card-caption h3{font-size:21px;line-height:1.55;font-weight:700}
+.card-caption>p{font-size:12px;font-weight:600;letter-spacing:.55px;color:#64534b;line-height:1.6;margin-top:3px}
+.card-caption .menu-price b{font-size:29px;font-weight:600}
+.card-caption .riyal-symbol{width:19px;height:21px}
+.category-tab>span:nth-child(2){font-size:17px;font-weight:500;line-height:1.5}
+.category-tab small{font-size:10px;font-weight:600;letter-spacing:1px;opacity:.9;line-height:1.5}
+.category-tab:not(.active)>span:nth-child(2){color:#48342e}
+.category-tab.active>span:nth-child(2){font-weight:700}
+.tab-count{font-size:14px;opacity:.8}
+.cover-tagline{font-size:23px;font-weight:700;line-height:1.6}
+.cover-english{font-size:13px;font-weight:600;letter-spacing:2px;line-height:1.7;color:var(--wine)}
+.menu-brand>span:nth-child(2){font-size:15px;font-weight:500}.menu-brand small{font-size:11px;font-weight:600}
+.image-lightbox::backdrop{background:rgba(36,24,28,.28);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.glass-preview{background:linear-gradient(135deg,#ffffff45,#ffffff1c);backdrop-filter:blur(9px) saturate(1.15);-webkit-backdrop-filter:blur(9px) saturate(1.15);border-color:#ffffff8c;box-shadow:0 24px 65px #24141c38,inset 0 1px 0 #ffffff88}
+.preview-caption{color:#3d2630;text-shadow:0 1px 10px #fff9f080}.preview-caption .menu-price{color:var(--wine)}.preview-caption p{font-size:13px;font-weight:600;opacity:1;letter-spacing:.7px}.preview-caption h2{font-size:26px}
+@media(orientation:landscape) and (min-width:701px){.menu-brand{height:58px}.menu-brand>span:first-child{font-size:32px}.category-tabs{padding:10px 0}.category-tab{min-height:70px;padding-block:10px}.section-title{padding:25px 0 23px}}
+@media(max-width:1100px){.category-tab>span:nth-child(2){font-size:15px}.category-tab small{font-size:9px;letter-spacing:.6px}.card-caption h3{font-size:19px}.card-caption .menu-price b{font-size:27px}.card-caption>p{font-size:11px}}
+@media(max-width:700px){.category-tab>span:nth-child(2){font-size:12px;line-height:1.5}.category-tab small{font-size:8px;letter-spacing:.25px}.menu-brand>span:nth-child(2){font-size:12px}.menu-brand small{font-size:9px}.cover-tagline{font-size:21px}.cover-english{font-size:11px;letter-spacing:1.5px}}
+@media(max-width:600px){.card-caption h3{font-size:16px}.card-caption>p{font-size:10px;letter-spacing:.25px;overflow-wrap:anywhere}.card-caption .menu-price b{font-size:24px}.card-caption .riyal-symbol{width:15px;height:17px}.preview-caption h2{font-size:22px}.preview-caption p{font-size:11px}}
+@media(max-width:360px){.category-tab>span:nth-child(2){font-size:11px}.category-tab small{font-size:7px}.card-caption h3{font-size:15px}.card-caption .menu-price b{font-size:22px}}
+.preview-caption{background:rgba(255,250,242,.72);border:1px solid #ffffff55;border-radius:12px;margin-top:10px;padding:15px 16px;text-shadow:none}
