@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import Image from "next/image";
+import { flushSync } from "react-dom";
+import { startMenuIdleReset } from "@/lib/menuIdle";
 import {
   AnimatePresence,
   motion,
@@ -134,6 +136,19 @@ export function HomePage() {
   const coverVisible = useInView(cover);
   const menu = useRef<HTMLElement>(null);
   const returnToStart = useRef(false);
+  useEffect(() => startMenuIdleReset(() => {
+    // Finish dialog cleanup before scrolling, so restored focus cannot jump back.
+    returnToStart.current = false;
+    flushSync(() => {
+      setPreview(null);
+      setCategory("hot");
+    });
+    cover.current?.focus({ preventScroll: true });
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    if (window.location.hash) {
+      window.history.replaceState(window.history.state, "", window.location.pathname + window.location.search);
+    }
+  }), []);
   const reduced = useReducedMotion();
   const { scrollYProgress } = useScroll({
     target: cover,
@@ -174,6 +189,7 @@ export function HomePage() {
         <section
           className={`menu-cover ${coverVisible ? "cover-awake" : "cover-paused"}`}
           ref={cover}
+          tabIndex={-1}
           aria-label="أينما — غلاف المينيو"
         >
           <div className="cover-corner" lang="en">
