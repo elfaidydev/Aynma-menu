@@ -1,3 +1,5 @@
+import { publicAsset } from "@/lib/publicAsset";
+
 export type MenuTheme = "default" | "hot" | "cold" | "sweets" | "drip";
 
 export type MenuItem = {
@@ -25,7 +27,7 @@ export const NAV_ITEMS = [
 
 export const DEFAULT_ACTIVE_SECTION = NAV_ITEMS[0].id;
 
-const asset = (folder: "cold" | "hot" | "sweets", file: string) => `/assets/${folder}/${file}`;
+const asset = (folder: "cold" | "hot" | "sweets", file: string) => publicAsset(`/assets/${folder}/${file}`);
 
 export const MENU_SECTIONS: MenuSection[] = [
   {

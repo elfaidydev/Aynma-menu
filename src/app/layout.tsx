@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { publicAsset } from "@/lib/publicAsset";
 import localFont from "next/font/local";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import "./globals.css";
@@ -26,7 +27,7 @@ const outfit = localFont({
 export const metadata: Metadata = {
   title: "منيو — كوفي اينما | AYNMA",
   description: "منيو كوفي اينما — AYNMA Coffee Menu",
-  manifest: "/manifest.webmanifest",
+  manifest: publicAsset("/manifest.webmanifest"),
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -34,10 +35,10 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
-      { url: "/favicon-16.png", sizes: "16x16", type: "image/png" },
+      { url: publicAsset("/favicon-32.png"), sizes: "32x32", type: "image/png" },
+      { url: publicAsset("/favicon-16.png"), sizes: "16x16", type: "image/png" },
     ],
-    apple: "/apple-touch-icon.png",
+    apple: publicAsset("/apple-touch-icon.png"),
   },
 };
 

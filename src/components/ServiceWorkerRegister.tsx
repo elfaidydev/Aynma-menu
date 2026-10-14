@@ -1,5 +1,6 @@
 "use client";
 
+import { publicAsset } from "@/lib/publicAsset";
 import { useEffect } from "react";
 
 export function ServiceWorkerRegister() {
@@ -8,7 +9,7 @@ export function ServiceWorkerRegister() {
     if (!("serviceWorker" in navigator)) return;
 
     const register = () => {
-      navigator.serviceWorker.register("/sw.js").catch(() => {});
+      navigator.serviceWorker.register(publicAsset("/sw.js"), { scope: publicAsset("/") }).catch(() => {});
     };
 
     if (document.readyState === "complete") {

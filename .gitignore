@@ -6,3 +6,5 @@ video-frames
 *.local
 
 *.tsbuildinfo
+
+out/
