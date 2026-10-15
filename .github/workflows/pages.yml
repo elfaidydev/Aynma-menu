@@ -21,7 +21,7 @@ jobs:
         id: pages
         uses: actions/configure-pages@v5
       - run: npm ci
-      - run: node --test tests/menu-idle.test.cjs
+      - run: node --test tests/*.test.cjs
       - run: npm run build:pages
         env:
           NEXT_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
